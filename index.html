@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore Cartoline Satiriche</title>
+    
+    <!-- Google Fonts: Economica Bold -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Economica:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Libreria per esportazione immagine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #e5e5e5;
+        }
+
+        /* Sidebar di controllo */
+        #sidebar {
+            width: 320px;
+            background: #ffffff;
+            padding: 25px;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        h2 { margin: 0; font-size: 1.3rem; color: #1a1a1a; border-bottom: 2px solid #8b0000; padding-bottom: 10px; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-weight: bold; font-size: 13px; color: #444; }
+        textarea, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; outline: none; }
+        textarea { height: 120px; resize: none; }
+        textarea:focus, input:focus { border-color: #8b0000; }
+
+        #btn-download {
+            background-color: #8b0000;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-transform: uppercase;
+        }
+        #btn-download:hover { background-color: #5d0000; }
+
+        /* Area Anteprima */
+        #preview-area {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* La Cartolina con il tuo sfondo */
+        #postcard {
+            width: 800px;
+            height: 450px;
+            background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg'); 
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        /* Contenitore centrale per la battuta (65% dell'altezza) */
+        #text-container {
+            width: 85%;
+            height: 65%;
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+        }
+
+        /* Testo Economica Bold (SENZA text-transform: uppercase) */
+        #display-text {
+            margin: 0;
+            font-family: 'Economica', sans-serif;
+            font-weight: 700;
+            color: #000; 
+            line-height: 0.95;
+            word-wrap: break-word;
+            text-shadow: none;
+        }
+
+        /* Contenitore Autore in basso */
+        #author-container {
+            position: absolute;
+            bottom: 35px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #display-author {
+            font-family: 'Economica', sans-serif;
+            font-weight: 700;
+            color: #8B0000; /* Rosso Scuro */
+            font-size: 28px;
+            /* Rimosso uppercase anche qui */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Postcard Editor</h2>
+        
+        <div class="input-group">
+            <label>Battuta satirica:</label>
+            <textarea id="input-text" placeholder="Scrivi qui la tua frase...">Il testo apparirà esattamente come lo scrivi qui, rispettando Maiuscole e minuscole.</textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Autore:</label>
+            <input type="text" id="input-author" placeholder="Nome autore" value="Nome Autore">
+        </div>
+
+        <button id="btn-download">Scarica Immagine</button>
+    </div>
+
+    <div id="preview-area">
+        <div id="postcard">
+            <div id="text-container">
+                <h1 id="display-text">Il testo apparirà esattamente come lo scrivi qui, rispettando Maiuscole e minuscole.</h1>
+            </div>
+
+            <div id="author-container">
+                <div id="display-author">[Nome Autore]</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputText = document.getElementById('input-text');
+        const inputAuthor = document.getElementById('input-author');
+        const displayText = document.getElementById('display-text');
+        const displayAuthor = document.getElementById('display-author');
+        const textContainer = document.getElementById('text-container');
+        const postcard = document.getElementById('postcard');
+
+        function autoFit() {
+            let fontSize = 160; 
+            const maxHeight = textContainer.clientHeight;
+            const maxWidth = textContainer.clientWidth;
+
+            displayText.style.fontSize = fontSize + "px";
+
+            while (
+                (displayText.scrollHeight > maxHeight || displayText.scrollWidth > maxWidth) 
+                && fontSize > 12
+            ) {
+                fontSize -= 1;
+                displayText.style.fontSize = fontSize + "px";
+            }
+        }
+
+        inputText.addEventListener('input', () => {
+            displayText.innerText = inputText.value;
+            autoFit();
+        });
+
+        inputAuthor.addEventListener('input', () => {
+            const val = inputAuthor.value.trim();
+            displayAuthor.innerText = val ? `[${val}]` : "";
+        });
+
+        document.getElementById('btn-download').addEventListener('click', () => {
+            document.fonts.ready.then(() => {
+                html2canvas(postcard, {
+                    scale: 3, 
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'cartolina-satirica.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            });
+        });
+
+        window.onload = () => {
+            autoFit();
+        };
+    </script>
+</body>
+</html>
