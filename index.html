@@ -83,4 +83,102 @@
 
         /* Scalatura per cellulari */
         @media (max-width: 1024px) {
-            #pos
+            #postcard {
+                transform: scale(0.33);
+                transform-origin: top center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="top-header">Generatore di battute per 'O Strunz</div>
+
+    <div id="panel">
+        <div class="box">
+            <label>Battuta</label>
+            <textarea id="in-joke">Inserisci qui la tua battuta...</textarea>
+        </div>
+        <div class="box">
+            <label>Autore</label>
+            <input type="text" id="in-name" value="Mauro Morandi">
+        </div>
+        <button id="btn-save">SALVA CARTOLINA</button>
+    </div>
+
+    <div id="preview-box">
+        <div id="postcard">
+            <div id="joke-wrap">
+                <div id="out-text">Inserisci qui la tua battuta...</div>
+            </div>
+            <div id="author-wrap">
+                <div id="out-author">[Mauro Morandi]</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inJoke = document.getElementById('in-joke');
+        const inName = document.getElementById('in-name');
+        const outText = document.getElementById('out-text');
+        const outAuthor = document.getElementById('out-author');
+        const postcard = document.getElementById('postcard');
+        const btnSave = document.getElementById('btn-save');
+
+        function refresh() {
+            // Testo Battuta
+            outText.innerText = inJoke.value;
+            
+            // Logica Font: Parte da 75px e scende solo se necessario
+            let size = 75;
+            outText.style.fontSize = size + "px";
+            
+            // Controlla se il testo esce dall'area di 750px di altezza
+            while (outText.scrollHeight > 700 && size > 15) {
+                size -= 2;
+                outText.style.fontSize = size + "px";
+            }
+
+            // Testo Autore
+            const nome = inName.value.trim();
+            outAuthor.innerText = nome ? "[" + nome + "]" : "";
+        }
+
+        inJoke.oninput = refresh;
+        inName.oninput = refresh;
+
+        btnSave.onclick = function() {
+            btnSave.innerText = "ELABORAZIONE...";
+            btnSave.style.opacity = "0.5";
+
+            const originalTransform = postcard.style.transform;
+            postcard.style.transform = "none";
+
+            setTimeout(() => {
+                html2canvas(postcard, {
+                    width: 1024,
+                    height: 1024,
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'cartolina-ostrunz.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    postcard.style.transform = originalTransform;
+                    btnSave.innerText = "SALVA CARTOLINA";
+                    btnSave.style.opacity = "1";
+                }).catch(err => {
+                    alert("Errore: " + err);
+                    postcard.style.transform = originalTransform;
+                    btnSave.innerText = "SALVA CARTOLINA";
+                });
+            }, 500);
+        };
+
+        window.onload = refresh;
+    </script>
+</body>
+</html>
