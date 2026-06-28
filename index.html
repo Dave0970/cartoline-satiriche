@@ -3,151 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generatore Cartoline Satiriche</title>
+    <title>Generatore Cartoline Quadrato Perfetto</title>
     
-    <!-- Google Fonts: Economica Bold -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Economica:wght@700&display=swap" rel="stylesheet">
-
-    <!-- Libreria per esportazione immagine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
-            height: 100vh;
-            background-color: #e5e5e5;
-        }
-
-        /* Sidebar di controllo */
-        #sidebar {
-            width: 320px;
-            background: #ffffff;
-            padding: 25px;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            display: flex;
             flex-direction: column;
-            gap: 20px;
-            z-index: 10;
+            background-color: #f0f0f0;
+            min-height: 100vh;
         }
 
-        h2 { margin: 0; font-size: 1.3rem; color: #1a1a1a; border-bottom: 2px solid #8b0000; padding-bottom: 10px; }
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        label { font-weight: bold; font-size: 13px; color: #444; }
-        textarea, input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; outline: none; }
-        textarea { height: 120px; resize: none; }
-        textarea:focus, input:focus { border-color: #8b0000; }
-
-        #btn-download {
-            background-color: #8b0000;
-            color: white;
-            border: none;
+        /* Pannello controlli in alto per mobile */
+        #sidebar {
+            width: 100%;
+            background: #fff;
             padding: 15px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-            text-transform: uppercase;
-        }
-        #btn-download:hover { background-color: #5d0000; }
-
-        /* Area Anteprima */
-        #preview-area {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* La Cartolina con il tuo sfondo */
-        #postcard {
-            width: 800px;
-            height: 450px;
-            background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg'); 
-            background-size: cover;
-            background-position: center;
-            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            overflow: hidden;
+            gap: 10px;
         }
 
-        /* Contenitore centrale per la battuta (65% dell'altezza) */
-        #text-container {
-            width: 85%;
-            height: 65%;
-            display: flex;
-            align-items: center; 
-            justify-content: center; 
-            text-align: center;
-        }
-
-        /* Testo Economica Bold (SENZA text-transform: uppercase) */
-        #display-text {
-            margin: 0;
-            font-family: 'Economica', sans-serif;
-            font-weight: 700;
-            color: #000; 
-            line-height: 0.95;
-            word-wrap: break-word;
-            text-shadow: none;
-        }
-
-        /* Contenitore Autore in basso */
-        #author-container {
-            position: absolute;
-            bottom: 35px;
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generatore Cartoline Satiriche</title>
-    
-    <!-- Google Fonts: Economica Bold -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Economica:wght@700&display=swap" rel="stylesheet">
-
-    <!-- Libreria per esportazione immagine -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: row;
-            height: 100vh;
-            background-color: #e5e5e5;
-        }
-
-        /* Sidebar di controllo */
-        #sidebar {
-            width: 300px;
-            min-width: 300px;
-            background: #ffffff;
-            padding: 20px;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 10;
-            overflow-y: auto;
-        }
-
-        h2 { margin: 0; font-size: 1.1rem; color: #1a1a1a; border-bottom: 2px solid #8b0000; padding-bottom: 10px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-weight: bold; font-size: 12px; color: #444; }
-        textarea, input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
-        textarea { height: 100px; resize: none; }
+        label { font-weight: bold; font-size: 12px; color: #8b0000; }
+        textarea, input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        textarea { height: 60px; resize: none; }
 
         #btn-download {
             background-color: #8b0000;
@@ -156,59 +44,42 @@
             padding: 12px;
             border-radius: 6px;
             font-weight: bold;
-            cursor: pointer;
             text-transform: uppercase;
         }
 
-        /* Area Anteprima */
+        /* Area Anteprima flessibile */
         #preview-area {
             flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            overflow: auto;
+            padding: 10px;
         }
 
-        /* La Cartolina QUADRATA (800x800) */
+        /* LA CARTOLINA: Forza il quadrato perfetto */
         #postcard {
-            width: 800px;
-            height: 800px;
+            width: 100%;
+            max-width: 800px; /* Dimensione massima a video */
+            aspect-ratio: 1 / 1; /* Quadrato perfetto */
             background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg'); 
-            background-size: contain; /* Assicura che l'immagine 2048x2048 sia tutta visibile */
-            background-repeat: no-repeat;
+            background-size: cover; /* Riempie tutto il quadrato senza lasciare bordi bianchi */
             background-position: center;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            background-color: white;
-            flex-shrink: 0; /* Impedisce il rimpicciolimento forzato del div */
+            justify-content: center;
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        /* Responsive per mobile: scala l'anteprima senza rompere il download */
-        @media (max-width: 1100px) {
-            #postcard {
-                transform: scale(0.5); /* Riduce la vista sul telefono */
-            }
-        }
-        @media (max-width: 600px) {
-            #postcard {
-                transform: scale(0.4);
-            }
-            body { flex-direction: column; }
-            #sidebar { width: 100%; height: auto; min-width: unset; }
-        }
-
-        /* Contenitore centrale per la battuta */
+        /* Area del testo centrata */
         #text-container {
-            width: 85%;
-            height: 50%; /* Ridotto per lasciare spazio alla firma grande */
+            width: 90%;
+            height: 60%;
             display: flex;
-            align-items: center; 
-            justify-content: center; 
+            align-items: center;
+            justify-content: center;
             text-align: center;
         }
 
@@ -216,15 +87,15 @@
             margin: 0;
             font-family: 'Economica', sans-serif;
             font-weight: 700;
-            color: #000; 
+            color: #000;
             line-height: 0.95;
             word-wrap: break-word;
         }
 
-        /* Firma Autore più GRANDE */
+        /* Firma Autore molto più grande e bassa */
         #author-container {
             position: absolute;
-            bottom: 60px; /* Alzata leggermente */
+            bottom: 8%; /* Posizione relativa al fondo */
             width: 100%;
             text-align: center;
         }
@@ -233,29 +104,34 @@
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 50px; /* Aumentata da 28px a 50px */
+            font-size: 60px; /* Firma molto grande */
+        }
+
+        /* Ottimizzazione per PC se lo giri */
+        @media (min-width: 900px) {
+            body { flex-direction: row; }
+            #sidebar { width: 320px; height: 100vh; }
         }
     </style>
 </head>
 <body>
 
     <div id="sidebar">
-        <h2>Postcard Editor</h2>
         <div class="input-group">
-            <label>Battuta satirica:</label>
-            <textarea id="input-text">Nuove considerazioni del governo: Noi siamo noi e voi non contate un cazzo.</textarea>
+            <label>BATTUTA:</label>
+            <textarea id="input-text">Scrivi qui la tua battuta satirica...</textarea>
         </div>
         <div class="input-group">
-            <label>Autore:</label>
+            <label>AUTORE:</label>
             <input type="text" id="input-author" value="Nome Autore">
         </div>
-        <button id="btn-download">Scarica Immagine</button>
+        <button id="btn-download">Scarica Cartolina Quadrata</button>
     </div>
 
     <div id="preview-area">
-        <div id="postcard">
+        <div id="postcard" id="capture">
             <div id="text-container">
-                <h1 id="display-text">Nuove considerazioni del governo: Noi siamo noi e voi non contate un cazzo.</h1>
+                <h1 id="display-text">Scrivi qui la tua battuta satirica...</h1>
             </div>
             <div id="author-container">
                 <div id="display-author">[Nome Autore]</div>
@@ -268,17 +144,21 @@
         const inputAuthor = document.getElementById('input-author');
         const displayText = document.getElementById('display-text');
         const displayAuthor = document.getElementById('display-author');
-        const textContainer = document.getElementById('text-container');
+        const container = document.getElementById('text-container');
         const postcard = document.getElementById('postcard');
 
         function autoFit() {
-            let fontSize = 180; 
-            const maxHeight = textContainer.clientHeight;
-            const maxWidth = textContainer.clientWidth;
+            // Calcola dinamicamente basandosi sulla larghezza corrente della cartolina
+            const currentWidth = postcard.clientWidth;
+            let fontSize = currentWidth * 0.2; // Dimensione proporzionale
+            
+            const maxHeight = container.clientHeight;
+            const maxWidth = container.clientWidth;
+            
             displayText.style.fontSize = fontSize + "px";
 
-            while ((displayText.scrollHeight > maxHeight || displayText.scrollWidth > maxWidth) && fontSize > 15) {
-                fontSize -= 2;
+            while ((displayText.scrollHeight > maxHeight || displayText.scrollWidth > maxWidth) && fontSize > 10) {
+                fontSize -= 1;
                 displayText.style.fontSize = fontSize + "px";
             }
         }
@@ -294,25 +174,31 @@
         });
 
         document.getElementById('btn-download').addEventListener('click', () => {
-            // Rimuove temporaneamente la trasformazione per il download perfetto
-            const originalTransform = postcard.style.transform;
-            postcard.style.transform = "none";
+            // Forza una dimensione fissa per il download per evitare errori di proporzione mobile
+            const originalWidth = postcard.style.width;
+            postcard.style.width = "1000px";
+            autoFit(); // Ricalcola per la dimensione grande
 
             html2canvas(postcard, {
                 scale: 2, 
                 useCORS: true,
-                allowTaint: true,
-                width: 800,
-                height: 800
+                logging: false,
+                width: 1000,
+                height: 1000
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'cartolina-quadrata.png';
+                link.download = 'cartolina-social.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                postcard.style.transform = originalTransform;
+                
+                // Ripristina la visualizzazione mobile
+                postcard.style.width = originalWidth;
+                autoFit();
             });
         });
 
+        // Esegui ricalcolo quando la finestra cambia (es. rotazione telefono)
+        window.addEventListener('resize', autoFit);
         window.onload = autoFit;
     </script>
 </body>
