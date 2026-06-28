@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Generatore 'O Strunz</title>
+    <title>Generatore 'O Strunz - Centrato</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,8 +28,8 @@
             color: #8b0000;
             text-align: center;
             background: #fff;
-            padding: 10px 5px 0 5px;
-            font-size: 22px;
+            padding: 10px 5px 5px 5px;
+            font-size: 24px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -37,47 +37,48 @@
         /* Pannello Controlli */
         #controls { 
             background: #fff; 
-            padding: 10px 15px 15px 15px; 
+            padding: 5px 15px 15px 15px; 
             display: flex; 
             flex-direction: column; 
-            gap: 8px; 
+            gap: 10px; 
             z-index: 100; 
             border-bottom: 3px solid #8b0000;
         }
 
-        label { font-size: 10px; font-weight: bold; color: #444; text-transform: uppercase; }
+        label { font-size: 10px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 2px; }
         
-        /* Area di testo più grande */
         textarea { 
             height: 140px; 
-            padding: 10px; 
+            padding: 12px; 
             font-size: 16px; 
             border: 1px solid #ccc; 
             border-radius: 5px; 
             resize: none; 
             font-family: sans-serif;
+            line-height: 1.4;
         }
 
-        input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+        input { padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
         
         #btn-save { 
             background: #8b0000; 
             color: white; 
-            padding: 12px; 
+            padding: 14px; 
             border: none; 
             border-radius: 5px; 
             font-weight: bold; 
             text-transform: uppercase; 
             cursor: pointer;
             font-size: 16px;
+            margin-top: 5px;
         }
 
-        /* Area Anteprima spostata in alto */
+        /* Area Anteprima */
         #viewer { 
             flex-grow: 1; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; /* Allinea in alto */
+            align-items: flex-start; 
             padding: 10px; 
             overflow: hidden; 
         }
@@ -96,16 +97,17 @@
             flex-shrink: 0;
         }
 
-        /* Area Battuta */
+        /* Area Battuta (Ora con flex-grow per occupare lo spazio e centrare meglio) */
         .joke-area {
-            height: 70%; 
-            width: 85%;
+            flex-grow: 1;
+            width: 88%;
             margin: 0 auto;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; /* Centra verticale */
+            justify-content: center; /* Centra orizzontale */
             text-align: center;
-            padding-top: 20px;
+            /* Spinge il centro visivo un po' più in basso per bilanciare la firma */
+            padding-top: 100px; 
         }
 
         #display-text {
@@ -115,40 +117,39 @@
             line-height: 1.05;
             word-wrap: break-word;
             width: 100%;
-            font-size: 75px; /* Fissa a 75px */
+            font-size: 75px; 
         }
 
-        /* Area Autore spostata più in basso */
+        /* Area Autore */
         .author-area {
-            height: 30%;
+            height: 180px; /* Altezza fissa per l'area autore */
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 40px; /* Abbassata ancora di più */
+            padding-bottom: 40px; 
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 70px; /* Fissa a 70px */
+            font-size: 70px; 
             text-align: center;
         }
 
         /* Scalatura per smartphone */
         @media (max-width: 1024px) {
             #postcard {
-                transform: scale(0.33);
-                transform-origin: top center; /* Scalatura dall'alto */
+                transform: scale(0.32);
+                transform-origin: top center;
             }
         }
         
         /* Ottimizzazione per PC */
         @media (min-width: 900px) {
             body { flex-direction: row; }
-            #header-logo { padding-top: 20px; }
-            #left-panel { width: 350px; background: #fff; display: flex; flex-direction: column; height: 100vh; }
-            #controls { border-bottom: none; flex-grow: 1; }
+            #left-panel { width: 380px; background: #fff; display: flex; flex-direction: column; height: 100vh; }
+            #controls { border-bottom: none; flex-grow: 1; padding-top: 20px; }
             #viewer { align-items: center; }
             #postcard { transform: scale(0.5); transform-origin: center; }
         }
@@ -160,11 +161,11 @@
         <div id="header-logo">Generatore di battute per 'O Strunz</div>
         
         <div id="controls">
-            <div style="display:flex; flex-direction:column; gap:2px;">
+            <div class="input-group">
                 <label>Battuta</label>
                 <textarea id="in-text">Inserisci qui la tua battuta...</textarea>
             </div>
-            <div style="display:flex; flex-direction:column; gap:2px;">
+            <div class="input-group">
                 <label>Autore</label>
                 <input type="text" id="in-author" value="Mauro Morandi">
             </div>
@@ -193,8 +194,9 @@
         function fitText() {
             let size = 75; 
             displayText.style.fontSize = size + "px";
-            while ((displayText.scrollHeight > 680 || displayText.scrollWidth > 880) && size > 15) {
-                size -= 2;
+            // Il limite di altezza è ora tarato sullo spazio flessibile
+            while ((displayText.scrollHeight > 620 || displayText.scrollWidth > 900) && size > 15) {
+                size -= 1;
                 displayText.style.fontSize = size + "px";
             }
         }
