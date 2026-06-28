@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Postcard HD V7</title>
+    <title>Postcard Ultra HD - PNG</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,23 +12,24 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: sans-serif; background-color: #111; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Pannello Controlli */
+        /* Controlli */
         #controls { background: #fff; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; border-bottom: 3px solid #8b0000; }
         label { font-size: 10px; font-weight: bold; color: #8b0000; text-transform: uppercase; }
         textarea { height: 60px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
         input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
         #btn-save { background: #8b0000; color: white; padding: 15px; border: none; border-radius: 5px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
 
-        /* Area Anteprima */
+        /* Anteprima */
         #viewer { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
 
-        /* IL QUADRATO AD ALTA RISOLUZIONE (1024x1024) */
+        /* QUADRATO HD (1024x1024) */
         #postcard {
             width: 1024px;
             height: 1024px;
-            background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg');
+            /* PUNTA AL TUO FILE PNG LOCALE */
+            background-image: url('sfondo.png'); 
             background-size: cover;
             background-position: center;
             display: flex;
@@ -36,20 +37,19 @@
             position: relative;
             background-color: white;
             flex-shrink: 0;
-            /* Forza la resa dell'immagine al massimo */
             image-rendering: -webkit-optimize-contrast;
         }
 
-        /* Area Battuta */
+        /* Testo Battuta */
         .joke-area {
             height: 70%; 
-            width: 80%;
+            width: 82%;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding-top: 40px;
+            padding-top: 50px;
         }
 
         #display-text {
@@ -61,27 +61,27 @@
             width: 100%;
         }
 
-        /* Area Autore */
+        /* Testo Autore */
         .author-area {
             height: 30%;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 60px;
+            padding-bottom: 65px; /* Distanza dal basso */
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 58px; /* Firma aumentata */
+            font-size: 58px; /* Firma grande come richiesto */
             text-align: center;
         }
 
-        /* Scalatura per smartphone */
+        /* Adattamento schermo mobile */
         @media (max-width: 1024px) {
             #postcard {
-                transform: scale(0.32); /* Più piccolo a video per farlo entrare nel telefono */
+                transform: scale(0.33);
                 transform-origin: center;
             }
         }
@@ -98,7 +98,7 @@
             <label>Autore</label>
             <input type="text" id="in-author" value="Mauro Morandi">
         </div>
-        <button id="btn-save">Salva in Alta Qualità</button>
+        <button id="btn-save">Scarica in Alta Risoluzione</button>
     </div>
 
     <div id="viewer">
@@ -120,11 +120,9 @@
         const postcard = document.getElementById('postcard');
 
         function fitText() {
-            let size = 60; // Partenza più piccola (Elegante)
+            let size = 60; // Partenza sobria
             displayText.style.fontSize = size + "px";
-            
-            // Area di contenimento aumentata per 1024px
-            while ((displayText.scrollHeight > 650 || displayText.scrollWidth > 850) && size > 15) {
+            while ((displayText.scrollHeight > 650 || displayText.scrollWidth > 880) && size > 15) {
                 size -= 2;
                 displayText.style.fontSize = size + "px";
             }
@@ -143,16 +141,15 @@
         document.getElementById('btn-save').addEventListener('click', () => {
             window.scrollTo(0,0);
             const originalTransform = postcard.style.transform;
-            postcard.style.transform = "none"; // Reset per lo scatto
+            postcard.style.transform = "none";
 
+            // Cattura HD
             html2canvas(postcard, {
                 width: 1024,
                 height: 1024,
-                scale: 3, // Tripla densità di pixel (Massima nitidezza)
+                scale: 3, // Tripla densità per nitidezza massima
                 useCORS: true,
-                backgroundColor: "#ffffff",
-                imageTimeout: 0,
-                logging: false
+                backgroundColor: null
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'cartolina-HD.png';
