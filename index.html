@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Postcard HD - 75px/70px</title>
+    <title>Generatore 'O Strunz</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,17 +12,75 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        body { 
+            font-family: sans-serif; 
+            background-color: #1a1a1a; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+
+        /* Intestazione Logo */
+        #header-logo {
+            font-family: 'Economica', sans-serif;
+            font-weight: 700;
+            color: #8b0000;
+            text-align: center;
+            background: #fff;
+            padding: 10px 5px 0 5px;
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
         /* Pannello Controlli */
-        #controls { background: #fff; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; border-bottom: 3px solid #8b0000; }
-        label { font-size: 10px; font-weight: bold; color: #8b0000; text-transform: uppercase; }
-        textarea { height: 60px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
-        input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
-        #btn-save { background: #8b0000; color: white; padding: 15px; border: none; border-radius: 5px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+        #controls { 
+            background: #fff; 
+            padding: 10px 15px 15px 15px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            z-index: 100; 
+            border-bottom: 3px solid #8b0000;
+        }
 
-        /* Area Anteprima */
-        #viewer { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
+        label { font-size: 10px; font-weight: bold; color: #444; text-transform: uppercase; }
+        
+        /* Area di testo più grande */
+        textarea { 
+            height: 140px; 
+            padding: 10px; 
+            font-size: 16px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            resize: none; 
+            font-family: sans-serif;
+        }
+
+        input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+        
+        #btn-save { 
+            background: #8b0000; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Area Anteprima spostata in alto */
+        #viewer { 
+            flex-grow: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; /* Allinea in alto */
+            padding: 10px; 
+            overflow: hidden; 
+        }
 
         /* IL QUADRATO HD (1024x1024) */
         #postcard {
@@ -38,7 +96,7 @@
             flex-shrink: 0;
         }
 
-        /* Area Battuta (Centrale) */
+        /* Area Battuta */
         .joke-area {
             height: 70%; 
             width: 85%;
@@ -57,25 +115,23 @@
             line-height: 1.05;
             word-wrap: break-word;
             width: 100%;
-            /* GRANDEZZA RICHIESTA: 75px */
-            font-size: 75px; 
+            font-size: 75px; /* Fissa a 75px */
         }
 
-        /* Area Autore (Bassa) */
+        /* Area Autore spostata più in basso */
         .author-area {
             height: 30%;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 75px; 
+            padding-bottom: 40px; /* Abbassata ancora di più */
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            /* GRANDEZZA RICHIESTA: 70px */
-            font-size: 70px; 
+            font-size: 70px; /* Fissa a 70px */
             text-align: center;
         }
 
@@ -83,29 +139,43 @@
         @media (max-width: 1024px) {
             #postcard {
                 transform: scale(0.33);
-                transform-origin: center;
+                transform-origin: top center; /* Scalatura dall'alto */
             }
+        }
+        
+        /* Ottimizzazione per PC */
+        @media (min-width: 900px) {
+            body { flex-direction: row; }
+            #header-logo { padding-top: 20px; }
+            #left-panel { width: 350px; background: #fff; display: flex; flex-direction: column; height: 100vh; }
+            #controls { border-bottom: none; flex-grow: 1; }
+            #viewer { align-items: center; }
+            #postcard { transform: scale(0.5); transform-origin: center; }
         }
     </style>
 </head>
 <body>
 
-    <div id="controls">
-        <div style="display:flex; flex-direction:column; gap:2px;">
-            <label>Battuta</label>
-            <textarea id="in-text">Battuta a 75 pixel...</textarea>
+    <div id="left-panel">
+        <div id="header-logo">Generatore di battute per 'O Strunz</div>
+        
+        <div id="controls">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+                <label>Battuta</label>
+                <textarea id="in-text">Inserisci qui la tua battuta...</textarea>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+                <label>Autore</label>
+                <input type="text" id="in-author" value="Mauro Morandi">
+            </div>
+            <button id="btn-save">Salva Cartolina</button>
         </div>
-        <div style="display:flex; flex-direction:column; gap:2px;">
-            <label>Autore</label>
-            <input type="text" id="in-author" value="Mauro Morandi">
-        </div>
-        <button id="btn-save">Salva Cartolina HD</button>
     </div>
 
     <div id="viewer">
         <div id="postcard">
             <div class="joke-area">
-                <h1 id="display-text">Battuta a 75 pixel...</h1>
+                <h1 id="display-text">Inserisci qui la tua battuta...</h1>
             </div>
             <div class="author-area">
                 <div id="display-author">[Mauro Morandi]</div>
@@ -120,12 +190,9 @@
         const displayAuthor = document.getElementById('display-author');
         const postcard = document.getElementById('postcard');
 
-        // Funzione per il ridimensionamento font (parte da 75px)
         function fitText() {
             let size = 75; 
             displayText.style.fontSize = size + "px";
-            
-            // Riduce solo se il testo è lunghissimo e straborda dall'area 70%
             while ((displayText.scrollHeight > 680 || displayText.scrollWidth > 880) && size > 15) {
                 size -= 2;
                 displayText.style.fontSize = size + "px";
@@ -155,7 +222,7 @@
                 backgroundColor: null
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'cartolina-HD.png';
+                link.download = 'cartolina-O-Strunz.png';
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
                 postcard.style.transform = originalTransform;
