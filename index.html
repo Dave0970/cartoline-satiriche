@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Generatore 'O Strunz - Centrato</title>
+    <title>Generatore 'O Strunz - Fix</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,56 +21,66 @@
             min-height: 100vh; 
         }
 
-        /* Intestazione Logo */
+        /* Logo Titolo */
         #header-logo {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8b0000;
             text-align: center;
             background: #fff;
-            padding: 10px 5px 5px 5px;
-            font-size: 24px;
+            padding: 15px 10px 5px 10px;
+            font-size: 26px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        /* Pannello Controlli */
+        /* Pannello Controlli a larghezza piena */
         #controls { 
             background: #fff; 
-            padding: 5px 15px 15px 15px; 
+            padding: 10px 20px 20px 20px; 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
-            z-index: 100; 
+            gap: 12px; 
+            width: 100%;
             border-bottom: 3px solid #8b0000;
         }
 
-        label { font-size: 10px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 2px; }
+        .input-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+            width: 100%; 
+        }
+
+        label { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; }
         
         textarea { 
+            width: 100%;
             height: 140px; 
             padding: 12px; 
             font-size: 16px; 
             border: 1px solid #ccc; 
-            border-radius: 5px; 
+            border-radius: 6px; 
             resize: none; 
-            font-family: sans-serif;
-            line-height: 1.4;
         }
 
-        input { padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+        input { 
+            width: 100%;
+            padding: 12px; 
+            font-size: 16px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+        }
         
         #btn-save { 
             background: #8b0000; 
             color: white; 
-            padding: 14px; 
+            padding: 16px; 
             border: none; 
-            border-radius: 5px; 
+            border-radius: 6px; 
             font-weight: bold; 
             text-transform: uppercase; 
             cursor: pointer;
             font-size: 16px;
-            margin-top: 5px;
         }
 
         /* Area Anteprima */
@@ -79,8 +89,7 @@
             display: flex; 
             justify-content: center; 
             align-items: flex-start; 
-            padding: 10px; 
-            overflow: hidden; 
+            padding: 20px; 
         }
 
         /* IL QUADRATO HD (1024x1024) */
@@ -97,17 +106,16 @@
             flex-shrink: 0;
         }
 
-        /* Area Battuta (Ora con flex-grow per occupare lo spazio e centrare meglio) */
-        .joke-area {
-            flex-grow: 1;
-            width: 88%;
+        /* Area Battuta: Centrata perfettamente */
+        #joke-container {
+            flex-grow: 1; /* Prende tutto lo spazio tra sopra e l'autore */
+            width: 85%;
             margin: 0 auto;
             display: flex;
             align-items: center; /* Centra verticale */
             justify-content: center; /* Centra orizzontale */
             text-align: center;
-            /* Spinge il centro visivo un po' più in basso per bilanciare la firma */
-            padding-top: 100px; 
+            padding-top: 60px; /* Piccolo margine per non toccare il bordo alto */
         }
 
         #display-text {
@@ -120,9 +128,9 @@
             font-size: 75px; 
         }
 
-        /* Area Autore */
-        .author-area {
-            height: 180px; /* Altezza fissa per l'area autore */
+        /* Area Autore fissata in basso */
+        #author-container {
+            height: 200px; 
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -137,48 +145,37 @@
             text-align: center;
         }
 
-        /* Scalatura per smartphone */
+        /* Scalatura Mobile */
         @media (max-width: 1024px) {
             #postcard {
-                transform: scale(0.32);
+                transform: scale(0.33);
                 transform-origin: top center;
             }
-        }
-        
-        /* Ottimizzazione per PC */
-        @media (min-width: 900px) {
-            body { flex-direction: row; }
-            #left-panel { width: 380px; background: #fff; display: flex; flex-direction: column; height: 100vh; }
-            #controls { border-bottom: none; flex-grow: 1; padding-top: 20px; }
-            #viewer { align-items: center; }
-            #postcard { transform: scale(0.5); transform-origin: center; }
         }
     </style>
 </head>
 <body>
 
-    <div id="left-panel">
-        <div id="header-logo">Generatore di battute per 'O Strunz</div>
-        
-        <div id="controls">
-            <div class="input-group">
-                <label>Battuta</label>
-                <textarea id="in-text">Inserisci qui la tua battuta...</textarea>
-            </div>
-            <div class="input-group">
-                <label>Autore</label>
-                <input type="text" id="in-author" value="Mauro Morandi">
-            </div>
-            <button id="btn-save">Salva Cartolina</button>
+    <div id="header-logo">Generatore di battute per 'O Strunz</div>
+    
+    <div id="controls">
+        <div class="input-group">
+            <label>Battuta</label>
+            <textarea id="in-text">Inserisci qui la tua battuta...</textarea>
         </div>
+        <div class="input-group">
+            <label>Autore</label>
+            <input type="text" id="in-author" value="Mauro Morandi">
+        </div>
+        <button id="btn-save">Salva Cartolina</button>
     </div>
 
     <div id="viewer">
         <div id="postcard">
-            <div class="joke-area">
+            <div id="joke-container">
                 <h1 id="display-text">Inserisci qui la tua battuta...</h1>
             </div>
-            <div class="author-area">
+            <div id="author-container">
                 <div id="display-author">[Mauro Morandi]</div>
             </div>
         </div>
@@ -190,48 +187,14 @@
         const displayText = document.getElementById('display-text');
         const displayAuthor = document.getElementById('display-author');
         const postcard = document.getElementById('postcard');
+        const jokeContainer = document.getElementById('joke-container');
 
         function fitText() {
-            let size = 75; 
+            let size = 75; // Forza la partenza a 75px
             displayText.style.fontSize = size + "px";
-            // Il limite di altezza è ora tarato sullo spazio flessibile
-            while ((displayText.scrollHeight > 620 || displayText.scrollWidth > 900) && size > 15) {
-                size -= 1;
-                displayText.style.fontSize = size + "px";
-            }
-        }
+            
+            // Riduce solo se necessario per non uscire dal contenitore
+            const maxHeight = jokeContainer.clientHeight - 20;
+            const maxWidth = jokeContainer.clientWidth;
 
-        inText.addEventListener('input', () => {
-            displayText.innerText = inText.value;
-            fitText();
-        });
-
-        inAuthor.addEventListener('input', () => {
-            const val = inAuthor.value.trim();
-            displayAuthor.innerText = val ? `[${val}]` : "";
-        });
-
-        document.getElementById('btn-save').addEventListener('click', () => {
-            window.scrollTo(0,0);
-            const originalTransform = postcard.style.transform;
-            postcard.style.transform = "none";
-
-            html2canvas(postcard, {
-                width: 1024,
-                height: 1024,
-                scale: 3, 
-                useCORS: true,
-                backgroundColor: null
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'cartolina-O-Strunz.png';
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.click();
-                postcard.style.transform = originalTransform;
-            });
-        });
-
-        window.onload = fitText;
-    </script>
-</body>
-</html>
+            while ((displayText.scrollHeight > maxHeight || displ
