@@ -207,4 +207,23 @@
             html2canvas(postcard, {
                 width: 1024,
                 height: 1024,
-                scale:
+                scale: 3, 
+                useCORS: true,
+                backgroundColor: null
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'cartolina-O-Strunz.png';
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+                postcard.style.transform = originalTransform; // Ripristina anteprima
+            }).catch(err => {
+                alert("Errore durante il salvataggio. Riprova.");
+                postcard.style.transform = originalTransform;
+            });
+        };
+
+        // Esegui subito al caricamento
+        window.onload = updateAll;
+    </script>
+</body>
+</html>
