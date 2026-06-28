@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Postcard HD Final Proportions</title>
+    <title>Postcard HD - 75px/70px</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,16 +12,19 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background-color: #111; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; min-height: 100vh; }
 
+        /* Pannello Controlli */
         #controls { background: #fff; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; border-bottom: 3px solid #8b0000; }
         label { font-size: 10px; font-weight: bold; color: #8b0000; text-transform: uppercase; }
-        textarea { height: 65px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
+        textarea { height: 60px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
         input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
         #btn-save { background: #8b0000; color: white; padding: 15px; border: none; border-radius: 5px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
 
+        /* Area Anteprima */
         #viewer { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
 
+        /* IL QUADRATO HD (1024x1024) */
         #postcard {
             width: 1024px;
             height: 1024px;
@@ -35,42 +38,48 @@
             flex-shrink: 0;
         }
 
+        /* Area Battuta (Centrale) */
         .joke-area {
             height: 70%; 
-            width: 85%; /* Leggermente più larga per il testo */
+            width: 85%;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding-top: 40px;
+            padding-top: 20px;
         }
 
         #display-text {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #000;
-            line-height: 1.0;
+            line-height: 1.05;
             word-wrap: break-word;
             width: 100%;
+            /* GRANDEZZA RICHIESTA: 75px */
+            font-size: 75px; 
         }
 
+        /* Area Autore (Bassa) */
         .author-area {
             height: 30%;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 70px; /* Un po' più di spazio dal bordo */
+            padding-bottom: 75px; 
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 75px; /* Aumentato per l'HD */
+            /* GRANDEZZA RICHIESTA: 70px */
+            font-size: 70px; 
             text-align: center;
         }
 
+        /* Scalatura per smartphone */
         @media (max-width: 1024px) {
             #postcard {
                 transform: scale(0.33);
@@ -82,21 +91,21 @@
 <body>
 
     <div id="controls">
-        <div class="input-group">
+        <div style="display:flex; flex-direction:column; gap:2px;">
             <label>Battuta</label>
-            <textarea id="in-text">Inserisci qui il testo della tua cartolina...</textarea>
+            <textarea id="in-text">Battuta a 75 pixel...</textarea>
         </div>
-        <div class="input-group">
+        <div style="display:flex; flex-direction:column; gap:2px;">
             <label>Autore</label>
             <input type="text" id="in-author" value="Mauro Morandi">
         </div>
-        <button id="btn-save">Scarica Cartolina HD</button>
+        <button id="btn-save">Salva Cartolina HD</button>
     </div>
 
     <div id="viewer">
         <div id="postcard">
             <div class="joke-area">
-                <h1 id="display-text">Inserisci qui il testo della tua cartolina...</h1>
+                <h1 id="display-text">Battuta a 75 pixel...</h1>
             </div>
             <div class="author-area">
                 <div id="display-author">[Mauro Morandi]</div>
@@ -111,13 +120,13 @@
         const displayAuthor = document.getElementById('display-author');
         const postcard = document.getElementById('postcard');
 
+        // Funzione per il ridimensionamento font (parte da 75px)
         function fitText() {
-            // Su un'immagine 1024x1024, 130px è la dimensione ideale per una battuta leggibile
-            let size = 130; 
+            let size = 75; 
             displayText.style.fontSize = size + "px";
             
-            // Ridimensiona se il testo è troppo lungo
-            while ((displayText.scrollHeight > 680 || displayText.scrollWidth > 900) && size > 20) {
+            // Riduce solo se il testo è lunghissimo e straborda dall'area 70%
+            while ((displayText.scrollHeight > 680 || displayText.scrollWidth > 880) && size > 15) {
                 size -= 2;
                 displayText.style.fontSize = size + "px";
             }
@@ -146,7 +155,7 @@
                 backgroundColor: null
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'cartolina-satirica-HD.png';
+                link.download = 'cartolina-HD.png';
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
                 postcard.style.transform = originalTransform;
