@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Generatore Cartoline V4</title>
+    <title>Postcard Generator V6</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,50 +12,20 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: sans-serif;
-            background-color: #bbbbbb;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        body { font-family: sans-serif; background-color: #222; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Pannello comandi */
-        #controls {
-            background: #fff;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        textarea { height: 60px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
+        /* Controlli */
+        #controls { background: #fff; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        label { font-size: 10px; font-weight: bold; color: #8b0000; letter-spacing: 1px; }
+        textarea { height: 65px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
         input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
-        
-        #btn-save {
-            background: #8b0000;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+        #btn-save { background: #8b0000; color: white; padding: 15px; border: none; border-radius: 5px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
 
-        /* Area Anteprima */
-        #viewer {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-        }
+        /* Anteprima */
+        #viewer { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
 
-        /* IL QUADRATO (Target per il download) */
-        #export-target {
+        /* QUADRATO ORIGINALE (800x800) */
+        #postcard {
             width: 800px;
             height: 800px;
             background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg');
@@ -65,51 +35,52 @@
             flex-direction: column;
             position: relative;
             background-color: white;
-            /* Per l'anteprima mobile rimpiccioliamo visivamente */
-            transform-origin: center;
+            flex-shrink: 0;
         }
 
-        /* Zone di testo separate */
-        .main-text-area {
-            height: 65%; /* Parte alta e centrale */
-            width: 90%;
+        /* Area Testo Battuta */
+        .joke-area {
+            height: 75%; /* Occupa i 3/4 superiori */
+            width: 85%;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding-top: 40px;
+            padding-top: 20px;
         }
 
         #display-text {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #000;
-            line-height: 0.95;
+            line-height: 1.0;
             word-wrap: break-word;
             width: 100%;
         }
 
+        /* Area Autore (In fondo) */
         .author-area {
-            height: 35%; /* Parte bassa */
+            height: 25%; /* Quarto inferiore */
             display: flex;
-            align-items: center;
+            align-items: flex-end; /* Spinge verso il basso */
             justify-content: center;
-            padding-bottom: 40px;
+            padding-bottom: 40px; /* Distanza dal bordo inferiore */
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 45px; /* Firma dimensione media */
+            font-size: 48px; /* Firma bella visibile */
+            text-align: center;
         }
 
-        /* Fix per vedere il quadrato intero sul telefono */
-        @media (max-width: 850px) {
-            #export-target {
-                zoom: 0.45; /* Metodo alternativo allo scale per mobile */
-                -moz-transform: scale(0.45);
+        /* Fix visualizzazione Smartphone */
+        @media (max-width: 800px) {
+            #postcard {
+                transform: scale(0.42); /* Adatta il quadrato allo schermo del cell */
+                transform-origin: center;
             }
         }
     </style>
@@ -117,16 +88,21 @@
 <body>
 
     <div id="controls">
-        <textarea id="in-text" placeholder="Battuta...">Scrivi qui...</textarea>
-        <input type="text" id="in-author" value="Mauro Morandi">
-        <button id="btn-save">Scarica Cartolina</button>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+            <label>BATTUTA</label>
+            <textarea id="in-text">Inserisci qui il testo della tua cartolina satirica...</textarea>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+            <label>AUTORE</label>
+            <input type="text" id="in-author" value="Mauro Morandi">
+        </div>
+        <button id="btn-save">Salva Immagine</button>
     </div>
 
     <div id="viewer">
-        <!-- Questo è l'elemento che viene fotografato -->
-        <div id="export-target">
-            <div class="main-text-area">
-                <h1 id="display-text">Scrivi qui...</h1>
+        <div id="postcard">
+            <div class="joke-area">
+                <h1 id="display-text">Inserisci qui il testo della tua cartolina satirica...</h1>
             </div>
             <div class="author-area">
                 <div id="display-author">[Mauro Morandi]</div>
@@ -139,13 +115,15 @@
         const inAuthor = document.getElementById('in-author');
         const displayText = document.getElementById('display-text');
         const displayAuthor = document.getElementById('display-author');
-        const target = document.getElementById('export-target');
+        const postcard = document.getElementById('postcard');
 
-        function fit() {
-            let size = 120; // Dimensione massima battuta
+        // Funzione per il ridimensionamento font
+        function fitText() {
+            let size = 75; // Grandezza massima iniziale (più piccola per non urlare)
             displayText.style.fontSize = size + "px";
-            // Controlla che non esca dalla sua zona (65% dell'altezza)
-            while ((displayText.scrollHeight > 500 || displayText.scrollWidth > 720) && size > 15) {
+            
+            // Riduce se il testo è troppo lungo per l'area joke (600px di altezza circa)
+            while ((displayText.scrollHeight > 550 || displayText.scrollWidth > 680) && size > 15) {
                 size -= 2;
                 displayText.style.fontSize = size + "px";
             }
@@ -153,35 +131,40 @@
 
         inText.addEventListener('input', () => {
             displayText.innerText = inText.value;
-            fit();
+            fitText();
         });
 
         inAuthor.addEventListener('input', () => {
-            displayAuthor.innerText = inAuthor.value ? `[${inAuthor.value}]` : "";
+            const val = inAuthor.value.trim();
+            displayAuthor.innerText = val ? `[${val}]` : "";
         });
 
+        // Funzione Download corretta
         document.getElementById('btn-save').addEventListener('click', () => {
-            // Per il download perfetto forziamo lo zoom a 1 temporaneamente
-            const originalZoom = target.style.zoom;
-            target.style.zoom = "1";
+            // Scroll in cima e reset zoom temporaneo per evitare il taglio a sinistra
+            window.scrollTo(0,0);
             
-            html2canvas(target, {
+            const originalTransform = postcard.style.transform;
+            postcard.style.transform = "none"; // Resetta scala per lo scatto perfetto
+
+            html2canvas(postcard, {
                 width: 800,
                 height: 800,
-                scale: 2,
+                scale: 2, // Immagine finale 1600x1600 (alta qualità)
                 useCORS: true,
-                windowWidth: 800,
-                windowHeight: 800
+                backgroundColor: "#ffffff"
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'cartolina.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                target.style.zoom = originalZoom;
+                
+                // Ripristina l'anteprima per lo schermo del cell
+                postcard.style.transform = originalTransform;
             });
         });
 
-        window.onload = fit;
+        window.onload = fitText;
     </script>
 </body>
 </html>
