@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Generatore 'O Strunz PRO</title>
+    <title>O Strunz Generator</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,218 +12,75 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* HEADER E COMANDI */
+        #top-header { background: #fff; text-align: center; padding: 15px 10px 5px; font-family: 'Economica', sans-serif; font-size: 24px; color: #8b0000; text-transform: uppercase; }
         
-        body { 
-            font-family: sans-serif; 
-            background-color: #1a1a1a; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-        }
-
-        /* Titolo superiore */
-        #header-logo {
-            font-family: 'Economica', sans-serif;
-            font-weight: 700;
-            color: #8b0000;
-            text-align: center;
-            background: #fff;
-            padding: 15px 10px 5px 10px;
-            font-size: 24px;
-            text-transform: uppercase;
-        }
-
-        /* Pannello Controlli */
-        #controls { 
-            background: #fff; 
-            padding: 10px 20px 20px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            width: 100%;
-            border-bottom: 3px solid #8b0000;
-        }
-
-        .input-group { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+        #panel { background: #fff; padding: 10px 20px 20px; display: flex; flex-direction: column; gap: 12px; border-bottom: 4px solid #8b0000; width: 100%; }
+        
+        .box { display: flex; flex-direction: column; gap: 4px; width: 100%; }
         label { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; }
         
-        textarea { 
-            width: 100%; 
-            height: 140px; 
-            padding: 12px; 
-            font-size: 16px; 
-            border: 1px solid #ccc; 
-            border-radius: 6px; 
-            resize: none; 
-            font-family: sans-serif;
-        }
-
+        textarea { width: 100%; height: 140px; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; resize: none; font-family: sans-serif; }
         input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
         
-        #btn-save { 
-            background: #8b0000; 
-            color: white; 
-            padding: 16px; 
-            border: none; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            cursor: pointer;
-            font-size: 16px;
-        }
+        #btn-save { background: #8b0000; color: #fff; padding: 16px; border: none; border-radius: 6px; font-weight: bold; text-transform: uppercase; font-size: 16px; cursor: pointer; }
 
-        /* Area Anteprima */
-        #viewer { 
-            flex-grow: 1; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; /* Sposta l'anteprima verso l'alto */
-            padding: 20px 0; 
-        }
+        /* AREA ANTEPRIMA */
+        #preview-box { flex-grow: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px 0; overflow: hidden; }
 
-        /* CARTOLINA 1024x1024 */
+        /* LA CARTOLINA 1024x1024 */
         #postcard {
             width: 1024px;
             height: 1024px;
-            background-image: url('sfondo.png'); 
+            background-image: url('sfondo.png');
             background-size: cover;
             background-position: center;
+            background-color: #fff;
+            position: relative;
+            flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            position: relative;
-            background-color: white;
-            flex-shrink: 0;
         }
 
-        /* Centratura verticale della battuta */
+        /* Testo Battuta - 75px CENTRATO */
         #joke-wrap {
-            height: 750px; /* Spazio per la battuta */
-            width: 900px;
-            margin: 0 auto;
+            height: 750px; /* Area centrale per la battuta */
+            width: 100%;
             display: flex;
-            align-items: center; 
+            align-items: center;
             justify-content: center;
             text-align: center;
-            padding-top: 50px;
+            padding: 0 80px;
+            margin-top: 50px; /* Abbassa leggermente il centro visivo */
         }
 
-        #display-text {
+        #out-text {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #000;
             line-height: 1.05;
+            font-size: 75px; /* FORZATO A 75PX */
             word-wrap: break-word;
             width: 100%;
-            font-size: 75px; 
         }
 
-        /* Firma in basso */
+        /* Autore - 70px IN BASSO */
         #author-wrap {
-            height: 274px; /* Spazio rimanente */
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            padding-bottom: 40px; 
+            position: absolute;
+            bottom: 40px; 
+            width: 100%;
+            text-align: center;
         }
 
-        #display-author {
+        #out-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 70px;
+            font-size: 70px; /* FORZATO A 70PX */
         }
 
-        /* Scalatura Mobile */
+        /* Scalatura per cellulari */
         @media (max-width: 1024px) {
-            #postcard {
-                transform: scale(0.33);
-                transform-origin: top center;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="header-logo">Generatore di battute per 'O Strunz</div>
-    
-    <div id="controls">
-        <div class="input-group">
-            <label>Battuta</label>
-            <textarea id="in-text" placeholder="Scrivi qui la battuta...">Inserisci qui la tua battuta...</textarea>
-        </div>
-        <div class="input-group">
-            <label>Autore</label>
-            <input type="text" id="in-author" value="Mauro Morandi">
-        </div>
-        <button id="btn-save">SALVA CARTOLINA</button>
-    </div>
-
-    <div id="viewer">
-        <div id="postcard">
-            <div id="joke-wrap">
-                <h1 id="display-text">Inserisci qui la tua battuta...</h1>
-            </div>
-            <div id="author-wrap">
-                <div id="display-author">[Mauro Morandi]</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const inText = document.getElementById('in-text');
-        const inAuthor = document.getElementById('in-author');
-        const displayText = document.getElementById('display-text');
-        const displayAuthor = document.getElementById('display-author');
-        const postcard = document.getElementById('postcard');
-
-        // Aggiorna anteprima e regola font
-        function updateAll() {
-            // Aggiorna i testi
-            displayText.innerText = inText.value;
-            const authorVal = inAuthor.value.trim();
-            displayAuthor.innerText = authorVal ? `[${authorVal}]` : "";
-
-            // Regola font battuta (max 75px)
-            let size = 75;
-            displayText.style.fontSize = size + "px";
-            
-            // Ridimensiona se esce dai limiti fissi (900px larghezza, 700px altezza)
-            while ((displayText.scrollHeight > 700 || displayText.scrollWidth > 880) && size > 15) {
-                size -= 1;
-                displayText.style.fontSize = size + "px";
-            }
-        }
-
-        // Ascolta la digitazione
-        inText.oninput = updateAll;
-        inAuthor.oninput = updateAll;
-
-        // Funzione Salva
-        document.getElementById('btn-save').onclick = function() {
-            window.scrollTo(0,0);
-            const originalTransform = postcard.style.transform;
-            postcard.style.transform = "none"; // Resetta scala per il download
-
-            html2canvas(postcard, {
-                width: 1024,
-                height: 1024,
-                scale: 3, 
-                useCORS: true,
-                backgroundColor: null
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'cartolina-O-Strunz.png';
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.click();
-                postcard.style.transform = originalTransform; // Ripristina anteprima
-            }).catch(err => {
-                alert("Errore durante il salvataggio. Riprova.");
-                postcard.style.transform = originalTransform;
-            });
-        };
-
-        // Esegui subito al caricamento
-        window.onload = updateAll;
-    </script>
-</body>
-</html>
+            #pos
