@@ -2,8 +2,8 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generatore Cartoline Quadrato Perfetto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Generatore Cartoline Satiriche V3</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,72 +11,81 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
-            background-color: #f0f0f0;
+            background-color: #d1d1d1;
             min-height: 100vh;
         }
 
-        /* Pannello controlli in alto per mobile */
+        /* Pannello controlli */
         #sidebar {
             width: 100%;
             background: #fff;
             padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             gap: 10px;
+            z-index: 20;
         }
 
         .input-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-weight: bold; font-size: 12px; color: #8b0000; }
-        textarea, input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
-        textarea { height: 60px; resize: none; }
+        label { font-weight: bold; font-size: 11px; color: #8b0000; text-transform: uppercase; }
+        textarea, input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: sans-serif; }
+        textarea { height: 70px; resize: none; }
 
         #btn-download {
             background-color: #8b0000;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 6px;
             font-weight: bold;
             text-transform: uppercase;
+            cursor: pointer;
         }
 
-        /* Area Anteprima flessibile */
+        /* Area Anteprima */
         #preview-area {
             flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
+            overflow: hidden;
         }
 
-        /* LA CARTOLINA: Forza il quadrato perfetto */
+        /* LA CARTOLINA - Struttura fissa 800x800 */
         #postcard {
-            width: 100%;
-            max-width: 800px; /* Dimensione massima a video */
-            aspect-ratio: 1 / 1; /* Quadrato perfetto */
+            width: 800px;
+            height: 800px;
             background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg'); 
-            background-size: cover; /* Riempie tutto il quadrato senza lasciare bordi bianchi */
+            background-size: cover;
             background-position: center;
-            position: relative;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: relative;
             background-color: #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
-        /* Area del testo centrata */
+        /* Container per scalare l'anteprima su mobile senza rompere il download */
+        #canvas-wrapper {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            /* Lo scaling viene gestito via JS per precisione */
+        }
+
+        /* Suddivisione Spazi per evitare sovrapposizioni */
+        #top-spacer { height: 15%; } /* Spazio vuoto sopra */
+        
         #text-container {
+            height: 55%; /* Spazio per la battuta */
             width: 90%;
-            height: 60%;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -88,29 +97,30 @@
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #000;
-            line-height: 0.95;
+            line-height: 1.0;
             word-wrap: break-word;
+            width: 100%;
         }
 
-        /* Firma Autore molto più grande e bassa */
         #author-container {
-            position: absolute;
-            bottom: 8%; /* Posizione relativa al fondo */
-            width: 100%;
-            text-align: center;
+            height: 30%; /* Spazio per la firma */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 20px;
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 60px; /* Firma molto grande */
+            font-size: 42px; /* Dimensione firma ridotta ed elegante */
+            text-align: center;
         }
 
-        /* Ottimizzazione per PC se lo giri */
         @media (min-width: 900px) {
             body { flex-direction: row; }
-            #sidebar { width: 320px; height: 100vh; }
+            #sidebar { width: 320px; height: 100vh; justify-content: center; }
         }
     </style>
 </head>
@@ -118,23 +128,26 @@
 
     <div id="sidebar">
         <div class="input-group">
-            <label>BATTUTA:</label>
+            <label>Battuta:</label>
             <textarea id="input-text">Scrivi qui la tua battuta satirica...</textarea>
         </div>
         <div class="input-group">
-            <label>AUTORE:</label>
-            <input type="text" id="input-author" value="Nome Autore">
+            <label>Autore:</label>
+            <input type="text" id="input-author" value="Mauro Morandi">
         </div>
-        <button id="btn-download">Scarica Cartolina Quadrata</button>
+        <button id="btn-download">Scarica Cartolina</button>
     </div>
 
     <div id="preview-area">
-        <div id="postcard" id="capture">
-            <div id="text-container">
-                <h1 id="display-text">Scrivi qui la tua battuta satirica...</h1>
-            </div>
-            <div id="author-container">
-                <div id="display-author">[Nome Autore]</div>
+        <div id="canvas-wrapper">
+            <div id="postcard">
+                <div id="top-spacer"></div>
+                <div id="text-container">
+                    <h1 id="display-text">Scrivi qui la tua battuta satirica...</h1>
+                </div>
+                <div id="author-container">
+                    <div id="display-author">[Mauro Morandi]</div>
+                </div>
             </div>
         </div>
     </div>
@@ -144,21 +157,31 @@
         const inputAuthor = document.getElementById('input-author');
         const displayText = document.getElementById('display-text');
         const displayAuthor = document.getElementById('display-author');
-        const container = document.getElementById('text-container');
+        const textContainer = document.getElementById('text-container');
         const postcard = document.getElementById('postcard');
+        const wrapper = document.getElementById('canvas-wrapper');
 
+        // 1. Funzione per adattare l'anteprima allo schermo dello smartphone
+        function scalePreview() {
+            const padding = 40;
+            const availableWidth = window.innerWidth - (window.innerWidth > 900 ? 320 : 0) - padding;
+            const availableHeight = window.innerHeight - (window.innerWidth > 900 ? 0 : 250) - padding;
+            const size = Math.min(availableWidth, availableHeight, 800);
+            const scale = size / 800;
+            wrapper.style.transform = `scale(${scale})`;
+            wrapper.style.transformOrigin = 'center';
+        }
+
+        // 2. Funzione per il testo (più conservativa)
         function autoFit() {
-            // Calcola dinamicamente basandosi sulla larghezza corrente della cartolina
-            const currentWidth = postcard.clientWidth;
-            let fontSize = currentWidth * 0.2; // Dimensione proporzionale
-            
-            const maxHeight = container.clientHeight;
-            const maxWidth = container.clientWidth;
+            let fontSize = 110; // Partiamo più bassi (era 160+)
+            const maxHeight = textContainer.clientHeight;
+            const maxWidth = textContainer.clientWidth;
             
             displayText.style.fontSize = fontSize + "px";
 
-            while ((displayText.scrollHeight > maxHeight || displayText.scrollWidth > maxWidth) && fontSize > 10) {
-                fontSize -= 1;
+            while ((displayText.scrollHeight > maxHeight || displayText.scrollWidth > maxWidth) && fontSize > 14) {
+                fontSize -= 2;
                 displayText.style.fontSize = fontSize + "px";
             }
         }
@@ -173,33 +196,28 @@
             displayAuthor.innerText = val ? `[${val}]` : "";
         });
 
+        // 3. Download corretto senza bordi bianchi
         document.getElementById('btn-download').addEventListener('click', () => {
-            // Forza una dimensione fissa per il download per evitare errori di proporzione mobile
-            const originalWidth = postcard.style.width;
-            postcard.style.width = "1000px";
-            autoFit(); // Ricalcola per la dimensione grande
-
+            // Usiamo una scala fissa per il download ignorando lo zoom del browser
             html2canvas(postcard, {
-                scale: 2, 
+                width: 800,
+                height: 800,
+                scale: 2, // Per avere un'immagine finale nitida 1600x1600
                 useCORS: true,
-                logging: false,
-                width: 1000,
-                height: 1000
+                backgroundColor: null
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'cartolina-social.png';
+                link.download = 'cartolina-satirica.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
-                // Ripristina la visualizzazione mobile
-                postcard.style.width = originalWidth;
-                autoFit();
             });
         });
 
-        // Esegui ricalcolo quando la finestra cambia (es. rotazione telefono)
-        window.addEventListener('resize', autoFit);
-        window.onload = autoFit;
+        window.addEventListener('resize', scalePreview);
+        window.onload = () => {
+            scalePreview();
+            autoFit();
+        };
     </script>
 </body>
 </html>
