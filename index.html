@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Postcard Ultra HD - Final</title>
+    <title>Postcard HD Final Proportions</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,17 +14,14 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: sans-serif; background-color: #111; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Controlli */
         #controls { background: #fff; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; border-bottom: 3px solid #8b0000; }
         label { font-size: 10px; font-weight: bold; color: #8b0000; text-transform: uppercase; }
-        textarea { height: 60px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
+        textarea { height: 65px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
         input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
         #btn-save { background: #8b0000; color: white; padding: 15px; border: none; border-radius: 5px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
 
-        /* Anteprima */
         #viewer { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
 
-        /* QUADRATO HD (1024x1024) */
         #postcard {
             width: 1024px;
             height: 1024px;
@@ -36,48 +33,44 @@
             position: relative;
             background-color: white;
             flex-shrink: 0;
-            image-rendering: -webkit-optimize-contrast;
         }
 
-        /* Testo Battuta */
         .joke-area {
             height: 70%; 
-            width: 82%;
+            width: 85%; /* Leggermente più larga per il testo */
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding-top: 50px;
+            padding-top: 40px;
         }
 
         #display-text {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #000;
-            line-height: 1.05;
+            line-height: 1.0;
             word-wrap: break-word;
             width: 100%;
         }
 
-        /* Testo Autore */
         .author-area {
             height: 30%;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 65px; 
+            padding-bottom: 70px; /* Un po' più di spazio dal bordo */
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 63px; /* Aumentato a 63px */
+            font-size: 75px; /* Aumentato per l'HD */
             text-align: center;
         }
 
-        /* Adattamento schermo mobile */
         @media (max-width: 1024px) {
             #postcard {
                 transform: scale(0.33);
@@ -89,15 +82,15 @@
 <body>
 
     <div id="controls">
-        <div style="display:flex; flex-direction:column; gap:2px;">
+        <div class="input-group">
             <label>Battuta</label>
             <textarea id="in-text">Inserisci qui il testo della tua cartolina...</textarea>
         </div>
-        <div style="display:flex; flex-direction:column; gap:2px;">
+        <div class="input-group">
             <label>Autore</label>
             <input type="text" id="in-author" value="Mauro Morandi">
         </div>
-        <button id="btn-save">Scarica in Alta Risoluzione</button>
+        <button id="btn-save">Scarica Cartolina HD</button>
     </div>
 
     <div id="viewer">
@@ -119,9 +112,12 @@
         const postcard = document.getElementById('postcard');
 
         function fitText() {
-            let size = 65; // Aumentato a 65px come punto di partenza
+            // Su un'immagine 1024x1024, 130px è la dimensione ideale per una battuta leggibile
+            let size = 130; 
             displayText.style.fontSize = size + "px";
-            while ((displayText.scrollHeight > 650 || displayText.scrollWidth > 880) && size > 15) {
+            
+            // Ridimensiona se il testo è troppo lungo
+            while ((displayText.scrollHeight > 680 || displayText.scrollWidth > 900) && size > 20) {
                 size -= 2;
                 displayText.style.fontSize = size + "px";
             }
@@ -132,4 +128,32 @@
             fitText();
         });
 
-        inAuthor.addEventListener('input', () =>
+        inAuthor.addEventListener('input', () => {
+            const val = inAuthor.value.trim();
+            displayAuthor.innerText = val ? `[${val}]` : "";
+        });
+
+        document.getElementById('btn-save').addEventListener('click', () => {
+            window.scrollTo(0,0);
+            const originalTransform = postcard.style.transform;
+            postcard.style.transform = "none";
+
+            html2canvas(postcard, {
+                width: 1024,
+                height: 1024,
+                scale: 3, 
+                useCORS: true,
+                backgroundColor: null
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'cartolina-satirica-HD.png';
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+                postcard.style.transform = originalTransform;
+            });
+        });
+
+        window.onload = fitText;
+    </script>
+</body>
+</html>
