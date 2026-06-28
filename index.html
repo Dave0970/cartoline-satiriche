@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>O Strunz Generator</title>
+    <title>Generatore 'O Strunz - Finale</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,16 +44,17 @@
             flex-direction: column;
         }
 
-        /* Testo Battuta - 75px CENTRATO */
+        /* Testo Battuta - 75px CENTRATO VERTICALMENTE */
         #joke-wrap {
-            height: 750px; /* Area centrale per la battuta */
+            height: 850px; /* Area estesa per migliorare la centratura */
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             padding: 0 80px;
-            margin-top: 50px; /* Abbassa leggermente il centro visivo */
+            /* Spostamento verso il basso per centratura visiva ottimale */
+            padding-top: 120px; 
         }
 
         #out-text {
@@ -61,7 +62,7 @@
             font-weight: 700;
             color: #000;
             line-height: 1.05;
-            font-size: 75px; /* FORZATO A 75PX */
+            font-size: 75px; 
             word-wrap: break-word;
             width: 100%;
         }
@@ -78,7 +79,7 @@
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 70px; /* FORZATO A 70PX */
+            font-size: 70px;
         }
 
         /* Scalatura per cellulari */
@@ -92,16 +93,19 @@
 </head>
 <body>
 
-    <div id="top-header">Generatore di battute per 'O Strunz</div>
+    <!-- MODIFICA 3: Titolo aggiornato -->
+    <div id="top-header">Generatore di CARTOLINE per 'O Strunz</div>
 
     <div id="panel">
         <div class="box">
             <label>Battuta</label>
-            <textarea id="in-joke">Inserisci qui la tua battuta...</textarea>
+            <!-- MODIFICA 2: Testo vuoto per rapidità -->
+            <textarea id="in-joke" placeholder="Inserisci qui il testo..."></textarea>
         </div>
         <div class="box">
             <label>Autore</label>
-            <input type="text" id="in-name" value="Mauro Morandi">
+            <!-- MODIFICA 2: Valore vuoto per rapidità -->
+            <input type="text" id="in-name" placeholder="Nome autore" value="">
         </div>
         <button id="btn-save">SALVA CARTOLINA</button>
     </div>
@@ -109,10 +113,10 @@
     <div id="preview-box">
         <div id="postcard">
             <div id="joke-wrap">
-                <div id="out-text">Inserisci qui la tua battuta...</div>
+                <div id="out-text"></div>
             </div>
             <div id="author-wrap">
-                <div id="out-author">[Mauro Morandi]</div>
+                <div id="out-author"></div>
             </div>
         </div>
     </div>
@@ -126,20 +130,16 @@
         const btnSave = document.getElementById('btn-save');
 
         function refresh() {
-            // Testo Battuta
             outText.innerText = inJoke.value;
             
-            // Logica Font: Parte da 75px e scende solo se necessario
             let size = 75;
             outText.style.fontSize = size + "px";
             
-            // Controlla se il testo esce dall'area di 750px di altezza
-            while (outText.scrollHeight > 700 && size > 15) {
+            while (outText.scrollHeight > 720 && size > 15) {
                 size -= 2;
                 outText.style.fontSize = size + "px";
             }
 
-            // Testo Autore
             const nome = inName.value.trim();
             outAuthor.innerText = nome ? "[" + nome + "]" : "";
         }
