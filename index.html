@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Postcard Ultra HD - PNG</title>
+    <title>Postcard Ultra HD - Final</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,6 @@
         #postcard {
             width: 1024px;
             height: 1024px;
-            /* PUNTA AL TUO FILE PNG LOCALE */
             background-image: url('sfondo.png'); 
             background-size: cover;
             background-position: center;
@@ -67,14 +66,14 @@
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 65px; /* Distanza dal basso */
+            padding-bottom: 65px; 
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 58px; /* Firma grande come richiesto */
+            font-size: 63px; /* Aumentato a 63px */
             text-align: center;
         }
 
@@ -120,7 +119,7 @@
         const postcard = document.getElementById('postcard');
 
         function fitText() {
-            let size = 60; // Partenza sobria
+            let size = 65; // Aumentato a 65px come punto di partenza
             displayText.style.fontSize = size + "px";
             while ((displayText.scrollHeight > 650 || displayText.scrollWidth > 880) && size > 15) {
                 size -= 2;
@@ -133,33 +132,4 @@
             fitText();
         });
 
-        inAuthor.addEventListener('input', () => {
-            const val = inAuthor.value.trim();
-            displayAuthor.innerText = val ? `[${val}]` : "";
-        });
-
-        document.getElementById('btn-save').addEventListener('click', () => {
-            window.scrollTo(0,0);
-            const originalTransform = postcard.style.transform;
-            postcard.style.transform = "none";
-
-            // Cattura HD
-            html2canvas(postcard, {
-                width: 1024,
-                height: 1024,
-                scale: 3, // Tripla densità per nitidezza massima
-                useCORS: true,
-                backgroundColor: null
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'cartolina-HD.png';
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.click();
-                postcard.style.transform = originalTransform;
-            });
-        });
-
-        window.onload = fitText;
-    </script>
-</body>
-</html>
+        inAuthor.addEventListener('input', () =>
