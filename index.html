@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Generatore 'O Strunz - Fix</title>
+    <title>Generatore 'O Strunz PRO</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@
             min-height: 100vh; 
         }
 
-        /* Logo Titolo */
+        /* Titolo superiore */
         #header-logo {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
@@ -29,11 +29,11 @@
             text-align: center;
             background: #fff;
             padding: 15px 10px 5px 10px;
-            font-size: 26px;
+            font-size: 24px;
             text-transform: uppercase;
         }
 
-        /* Pannello Controlli a larghezza piena */
+        /* Pannello Controlli */
         #controls { 
             background: #fff; 
             padding: 10px 20px 20px 20px; 
@@ -44,32 +44,21 @@
             border-bottom: 3px solid #8b0000;
         }
 
-        .input-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 4px; 
-            width: 100%; 
-        }
-
+        .input-group { display: flex; flex-direction: column; gap: 4px; width: 100%; }
         label { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; }
         
         textarea { 
-            width: 100%;
+            width: 100%; 
             height: 140px; 
             padding: 12px; 
             font-size: 16px; 
             border: 1px solid #ccc; 
             border-radius: 6px; 
             resize: none; 
+            font-family: sans-serif;
         }
 
-        input { 
-            width: 100%;
-            padding: 12px; 
-            font-size: 16px; 
-            border: 1px solid #ccc; 
-            border-radius: 6px; 
-        }
+        input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
         
         #btn-save { 
             background: #8b0000; 
@@ -88,11 +77,11 @@
             flex-grow: 1; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; 
-            padding: 20px; 
+            align-items: flex-start; /* Sposta l'anteprima verso l'alto */
+            padding: 20px 0; 
         }
 
-        /* IL QUADRATO HD (1024x1024) */
+        /* CARTOLINA 1024x1024 */
         #postcard {
             width: 1024px;
             height: 1024px;
@@ -106,16 +95,16 @@
             flex-shrink: 0;
         }
 
-        /* Area Battuta: Centrata perfettamente */
-        #joke-container {
-            flex-grow: 1; /* Prende tutto lo spazio tra sopra e l'autore */
-            width: 85%;
+        /* Centratura verticale della battuta */
+        #joke-wrap {
+            height: 750px; /* Spazio per la battuta */
+            width: 900px;
             margin: 0 auto;
             display: flex;
-            align-items: center; /* Centra verticale */
-            justify-content: center; /* Centra orizzontale */
+            align-items: center; 
+            justify-content: center;
             text-align: center;
-            padding-top: 60px; /* Piccolo margine per non toccare il bordo alto */
+            padding-top: 50px;
         }
 
         #display-text {
@@ -128,9 +117,9 @@
             font-size: 75px; 
         }
 
-        /* Area Autore fissata in basso */
-        #author-container {
-            height: 200px; 
+        /* Firma in basso */
+        #author-wrap {
+            height: 274px; /* Spazio rimanente */
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -141,8 +130,7 @@
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 70px; 
-            text-align: center;
+            font-size: 70px;
         }
 
         /* Scalatura Mobile */
@@ -161,21 +149,21 @@
     <div id="controls">
         <div class="input-group">
             <label>Battuta</label>
-            <textarea id="in-text">Inserisci qui la tua battuta...</textarea>
+            <textarea id="in-text" placeholder="Scrivi qui la battuta...">Inserisci qui la tua battuta...</textarea>
         </div>
         <div class="input-group">
             <label>Autore</label>
             <input type="text" id="in-author" value="Mauro Morandi">
         </div>
-        <button id="btn-save">Salva Cartolina</button>
+        <button id="btn-save">SALVA CARTOLINA</button>
     </div>
 
     <div id="viewer">
         <div id="postcard">
-            <div id="joke-container">
+            <div id="joke-wrap">
                 <h1 id="display-text">Inserisci qui la tua battuta...</h1>
             </div>
-            <div id="author-container">
+            <div id="author-wrap">
                 <div id="display-author">[Mauro Morandi]</div>
             </div>
         </div>
@@ -187,14 +175,36 @@
         const displayText = document.getElementById('display-text');
         const displayAuthor = document.getElementById('display-author');
         const postcard = document.getElementById('postcard');
-        const jokeContainer = document.getElementById('joke-container');
 
-        function fitText() {
-            let size = 75; // Forza la partenza a 75px
+        // Aggiorna anteprima e regola font
+        function updateAll() {
+            // Aggiorna i testi
+            displayText.innerText = inText.value;
+            const authorVal = inAuthor.value.trim();
+            displayAuthor.innerText = authorVal ? `[${authorVal}]` : "";
+
+            // Regola font battuta (max 75px)
+            let size = 75;
             displayText.style.fontSize = size + "px";
             
-            // Riduce solo se necessario per non uscire dal contenitore
-            const maxHeight = jokeContainer.clientHeight - 20;
-            const maxWidth = jokeContainer.clientWidth;
+            // Ridimensiona se esce dai limiti fissi (900px larghezza, 700px altezza)
+            while ((displayText.scrollHeight > 700 || displayText.scrollWidth > 880) && size > 15) {
+                size -= 1;
+                displayText.style.fontSize = size + "px";
+            }
+        }
 
-            while ((displayText.scrollHeight > maxHeight || displ
+        // Ascolta la digitazione
+        inText.oninput = updateAll;
+        inAuthor.oninput = updateAll;
+
+        // Funzione Salva
+        document.getElementById('btn-save').onclick = function() {
+            window.scrollTo(0,0);
+            const originalTransform = postcard.style.transform;
+            postcard.style.transform = "none"; // Resetta scala per il download
+
+            html2canvas(postcard, {
+                width: 1024,
+                height: 1024,
+                scale:
