@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Postcard Generator V6</title>
+    <title>Postcard HD V7</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,22 +12,22 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background-color: #222; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Controlli */
-        #controls { background: #fff; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        label { font-size: 10px; font-weight: bold; color: #8b0000; letter-spacing: 1px; }
-        textarea { height: 65px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
+        /* Pannello Controlli */
+        #controls { background: #fff; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; border-bottom: 3px solid #8b0000; }
+        label { font-size: 10px; font-weight: bold; color: #8b0000; text-transform: uppercase; }
+        textarea { height: 60px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: none; }
         input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
         #btn-save { background: #8b0000; color: white; padding: 15px; border: none; border-radius: 5px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
 
-        /* Anteprima */
+        /* Area Anteprima */
         #viewer { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
 
-        /* QUADRATO ORIGINALE (800x800) */
+        /* IL QUADRATO AD ALTA RISOLUZIONE (1024x1024) */
         #postcard {
-            width: 800px;
-            height: 800px;
+            width: 1024px;
+            height: 1024px;
             background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg');
             background-size: cover;
             background-position: center;
@@ -36,50 +36,52 @@
             position: relative;
             background-color: white;
             flex-shrink: 0;
+            /* Forza la resa dell'immagine al massimo */
+            image-rendering: -webkit-optimize-contrast;
         }
 
-        /* Area Testo Battuta */
+        /* Area Battuta */
         .joke-area {
-            height: 75%; /* Occupa i 3/4 superiori */
-            width: 85%;
+            height: 70%; 
+            width: 80%;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding-top: 20px;
+            padding-top: 40px;
         }
 
         #display-text {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #000;
-            line-height: 1.0;
+            line-height: 1.05;
             word-wrap: break-word;
             width: 100%;
         }
 
-        /* Area Autore (In fondo) */
+        /* Area Autore */
         .author-area {
-            height: 25%; /* Quarto inferiore */
+            height: 30%;
             display: flex;
-            align-items: flex-end; /* Spinge verso il basso */
+            align-items: flex-end;
             justify-content: center;
-            padding-bottom: 40px; /* Distanza dal bordo inferiore */
+            padding-bottom: 60px;
         }
 
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
             color: #8B0000;
-            font-size: 48px; /* Firma bella visibile */
+            font-size: 58px; /* Firma aumentata */
             text-align: center;
         }
 
-        /* Fix visualizzazione Smartphone */
-        @media (max-width: 800px) {
+        /* Scalatura per smartphone */
+        @media (max-width: 1024px) {
             #postcard {
-                transform: scale(0.42); /* Adatta il quadrato allo schermo del cell */
+                transform: scale(0.32); /* Più piccolo a video per farlo entrare nel telefono */
                 transform-origin: center;
             }
         }
@@ -89,20 +91,20 @@
 
     <div id="controls">
         <div style="display:flex; flex-direction:column; gap:2px;">
-            <label>BATTUTA</label>
-            <textarea id="in-text">Inserisci qui il testo della tua cartolina satirica...</textarea>
+            <label>Battuta</label>
+            <textarea id="in-text">Inserisci qui il testo della tua cartolina...</textarea>
         </div>
         <div style="display:flex; flex-direction:column; gap:2px;">
-            <label>AUTORE</label>
+            <label>Autore</label>
             <input type="text" id="in-author" value="Mauro Morandi">
         </div>
-        <button id="btn-save">Salva Immagine</button>
+        <button id="btn-save">Salva in Alta Qualità</button>
     </div>
 
     <div id="viewer">
         <div id="postcard">
             <div class="joke-area">
-                <h1 id="display-text">Inserisci qui il testo della tua cartolina satirica...</h1>
+                <h1 id="display-text">Inserisci qui il testo della tua cartolina...</h1>
             </div>
             <div class="author-area">
                 <div id="display-author">[Mauro Morandi]</div>
@@ -117,13 +119,12 @@
         const displayAuthor = document.getElementById('display-author');
         const postcard = document.getElementById('postcard');
 
-        // Funzione per il ridimensionamento font
         function fitText() {
-            let size = 75; // Grandezza massima iniziale (più piccola per non urlare)
+            let size = 60; // Partenza più piccola (Elegante)
             displayText.style.fontSize = size + "px";
             
-            // Riduce se il testo è troppo lungo per l'area joke (600px di altezza circa)
-            while ((displayText.scrollHeight > 550 || displayText.scrollWidth > 680) && size > 15) {
+            // Area di contenimento aumentata per 1024px
+            while ((displayText.scrollHeight > 650 || displayText.scrollWidth > 850) && size > 15) {
                 size -= 2;
                 displayText.style.fontSize = size + "px";
             }
@@ -139,27 +140,24 @@
             displayAuthor.innerText = val ? `[${val}]` : "";
         });
 
-        // Funzione Download corretta
         document.getElementById('btn-save').addEventListener('click', () => {
-            // Scroll in cima e reset zoom temporaneo per evitare il taglio a sinistra
             window.scrollTo(0,0);
-            
             const originalTransform = postcard.style.transform;
-            postcard.style.transform = "none"; // Resetta scala per lo scatto perfetto
+            postcard.style.transform = "none"; // Reset per lo scatto
 
             html2canvas(postcard, {
-                width: 800,
-                height: 800,
-                scale: 2, // Immagine finale 1600x1600 (alta qualità)
+                width: 1024,
+                height: 1024,
+                scale: 3, // Tripla densità di pixel (Massima nitidezza)
                 useCORS: true,
-                backgroundColor: "#ffffff"
+                backgroundColor: "#ffffff",
+                imageTimeout: 0,
+                logging: false
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'cartolina.png';
-                link.href = canvas.toDataURL('image/png');
+                link.download = 'cartolina-HD.png';
+                link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-                
-                // Ripristina l'anteprima per lo schermo del cell
                 postcard.style.transform = originalTransform;
             });
         });
