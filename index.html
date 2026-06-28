@@ -104,6 +104,127 @@
         #author-container {
             position: absolute;
             bottom: 35px;
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore Cartoline Satiriche</title>
+    
+    <!-- Google Fonts: Economica Bold -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Economica:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Libreria per esportazione immagine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            background-color: #e5e5e5;
+        }
+
+        /* Sidebar di controllo */
+        #sidebar {
+            width: 300px;
+            min-width: 300px;
+            background: #ffffff;
+            padding: 20px;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { margin: 0; font-size: 1.1rem; color: #1a1a1a; border-bottom: 2px solid #8b0000; padding-bottom: 10px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-weight: bold; font-size: 12px; color: #444; }
+        textarea, input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
+        textarea { height: 100px; resize: none; }
+
+        #btn-download {
+            background-color: #8b0000;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* Area Anteprima */
+        #preview-area {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        /* La Cartolina QUADRATA (800x800) */
+        #postcard {
+            width: 800px;
+            height: 800px;
+            background-image: url('https://i.ibb.co/fzTQYh2X/immagine.jpg'); 
+            background-size: contain; /* Assicura che l'immagine 2048x2048 sia tutta visibile */
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            background-color: white;
+            flex-shrink: 0; /* Impedisce il rimpicciolimento forzato del div */
+        }
+
+        /* Responsive per mobile: scala l'anteprima senza rompere il download */
+        @media (max-width: 1100px) {
+            #postcard {
+                transform: scale(0.5); /* Riduce la vista sul telefono */
+            }
+        }
+        @media (max-width: 600px) {
+            #postcard {
+                transform: scale(0.4);
+            }
+            body { flex-direction: column; }
+            #sidebar { width: 100%; height: auto; min-width: unset; }
+        }
+
+        /* Contenitore centrale per la battuta */
+        #text-container {
+            width: 85%;
+            height: 50%; /* Ridotto per lasciare spazio alla firma grande */
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+        }
+
+        #display-text {
+            margin: 0;
+            font-family: 'Economica', sans-serif;
+            font-weight: 700;
+            color: #000; 
+            line-height: 0.95;
+            word-wrap: break-word;
+        }
+
+        /* Firma Autore più GRANDE */
+        #author-container {
+            position: absolute;
+            bottom: 60px; /* Alzata leggermente */
             width: 100%;
             text-align: center;
         }
@@ -111,9 +232,8 @@
         #display-author {
             font-family: 'Economica', sans-serif;
             font-weight: 700;
-            color: #8B0000; /* Rosso Scuro */
-            font-size: 28px;
-            /* Rimosso uppercase anche qui */
+            color: #8B0000;
+            font-size: 50px; /* Aumentata da 28px a 50px */
         }
     </style>
 </head>
@@ -121,26 +241,22 @@
 
     <div id="sidebar">
         <h2>Postcard Editor</h2>
-        
         <div class="input-group">
             <label>Battuta satirica:</label>
-            <textarea id="input-text" placeholder="Scrivi qui la tua frase...">Il testo apparirà esattamente come lo scrivi qui, rispettando Maiuscole e minuscole.</textarea>
+            <textarea id="input-text">Nuove considerazioni del governo: Noi siamo noi e voi non contate un cazzo.</textarea>
         </div>
-
         <div class="input-group">
             <label>Autore:</label>
-            <input type="text" id="input-author" placeholder="Nome autore" value="Nome Autore">
+            <input type="text" id="input-author" value="Nome Autore">
         </div>
-
         <button id="btn-download">Scarica Immagine</button>
     </div>
 
     <div id="preview-area">
         <div id="postcard">
             <div id="text-container">
-                <h1 id="display-text">Il testo apparirà esattamente come lo scrivi qui, rispettando Maiuscole e minuscole.</h1>
+                <h1 id="display-text">Nuove considerazioni del governo: Noi siamo noi e voi non contate un cazzo.</h1>
             </div>
-
             <div id="author-container">
                 <div id="display-author">[Nome Autore]</div>
             </div>
@@ -156,17 +272,13 @@
         const postcard = document.getElementById('postcard');
 
         function autoFit() {
-            let fontSize = 160; 
+            let fontSize = 180; 
             const maxHeight = textContainer.clientHeight;
             const maxWidth = textContainer.clientWidth;
-
             displayText.style.fontSize = fontSize + "px";
 
-            while (
-                (displayText.scrollHeight > maxHeight || displayText.scrollWidth > maxWidth) 
-                && fontSize > 12
-            ) {
-                fontSize -= 1;
+            while ((displayText.scrollHeight > maxHeight || displayText.scrollWidth > maxWidth) && fontSize > 15) {
+                fontSize -= 2;
                 displayText.style.fontSize = fontSize + "px";
             }
         }
@@ -182,23 +294,26 @@
         });
 
         document.getElementById('btn-download').addEventListener('click', () => {
-            document.fonts.ready.then(() => {
-                html2canvas(postcard, {
-                    scale: 3, 
-                    useCORS: true,
-                    allowTaint: true
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = 'cartolina-satirica.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                });
+            // Rimuove temporaneamente la trasformazione per il download perfetto
+            const originalTransform = postcard.style.transform;
+            postcard.style.transform = "none";
+
+            html2canvas(postcard, {
+                scale: 2, 
+                useCORS: true,
+                allowTaint: true,
+                width: 800,
+                height: 800
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'cartolina-quadrata.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                postcard.style.transform = originalTransform;
             });
         });
 
-        window.onload = () => {
-            autoFit();
-        };
+        window.onload = autoFit;
     </script>
 </body>
 </html>
