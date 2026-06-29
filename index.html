@@ -2,6 +2,14 @@
 <html lang="it">
 <head>
     <meta name="theme-color" content="#8b0000">
+    <!-- Pre-carica l'immagine di sfondo e il font per velocizzare l'avvio -->
+<link rel="preload" href="sfondo.png" as="image">
+<link rel="preload" href="https://fonts.gstatic.com/s/economica/v9/Qw3P5QN8Ghf8_9X2uL7de2XzO_0.woff2" as="font" type="font/woff2" crossorigin>
+
+<style>
+  /* Forza il colore di sfondo immediato per evitare il flash bianco */
+  html, body { background-color: #1a1a1a !important; }
+</style>
     <!-- Collega il manifest appena creato -->
 <link rel="manifest" href="manifest.json">
 
